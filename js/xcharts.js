@@ -1,5 +1,5 @@
 /*!
-xCharts v0.1.3 Copyright (c) 2012, tenXer, Inc. All Rights Reserved.
+xCharts v0.2.0 Copyright (c) 2012, tenXer, Inc. All Rights Reserved.
 @license MIT license. http://github.com/tenXer/xcharts for details
 */
 
@@ -114,9 +114,12 @@ function _getExtents(options, data, xType, yType) {
       if (type !== 'time') {
         extended = _extendDomain(extents[axis]);
       }
-      extents[axis][i] = (options.hasOwnProperty(minMax) &&
-          options[minMax] !== null) ? options[minMax]
-          : (type !== 'time') ? extended[i] : extents[axis][i];
+
+      if (options.hasOwnProperty(minMax) && options[minMax] !== null) {
+        extents[axis][i] = options[minMax];
+      } else if (type !== 'time') {
+        extents[axis][i] = extended[i];
+      }
     });
   });
 
@@ -549,7 +552,12 @@ var emptyData = [[]],
     timing: 750,
 
     // Line interpolation
-    interpolation: 'monotone'
+    interpolation: 'monotone',
+
+    // Data sorting
+    sortX: function (a, b) {
+      return (!a.x && !b.x) ? 0 : (a.x < b.x) ? -1 : 1;
+    }
   };
 
 // What/how should the warning/error be presented?
@@ -629,6 +637,8 @@ function xChart(type, data, selector, options) {
   self._selector = selector;
   self._container = d3.select(selector);
   self._drawSvg();
+  self._mainStorage = {};
+  self._compStorage = {};
 
   data = _.clone(data);
   if (type && !data.type) {
@@ -732,10 +742,10 @@ _.defaults(xChart.prototype, {
       break;
     }
 
-    o.xMin = data.xMin || o.xMin;
-    o.xMax = data.xMax || o.xMax;
-    o.yMin = data.yMin || o.yMin;
-    o.yMax = data.yMax || o.yMax;
+    o.xMin = (isNaN(parseInt(data.xMin, 10))) ? o.xMin : data.xMin;
+    o.xMax = (isNaN(parseInt(data.xMax, 10))) ? o.xMax : data.xMax;
+    o.yMin = (isNaN(parseInt(data.yMin, 10))) ? o.yMin : data.yMin;
+    o.yMax = (isNaN(parseInt(data.yMax, 10))) ? o.yMax : data.yMax;
 
     if (self._vis) {
       self._destroy(self._vis, self._mainStorage);
@@ -753,13 +763,7 @@ _.defaults(xChart.prototype, {
           np.y = o.dataFormatY(p.y);
         }
         return np;
-      })
-        .sort(function (a, b) {
-          if (!a.x && !b.x) {
-            return 0;
-          }
-          return (a.x < b.x) ? -1 : 1;
-        });
+      }).sort(o.sortX);
       return _.extend(_.clone(set), { data: d });
     }
 
@@ -1088,9 +1092,6 @@ _.defaults(xChart.prototype, {
       vis.destroy(self, storage, self._options.timing);
     } catch (e) {}
   },
-
-  _mainStorage: {},
-  _compStorage: {},
 
   /**
    * Draw the visualization

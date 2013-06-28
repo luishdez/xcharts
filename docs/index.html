@@ -19,7 +19,7 @@
 
 
  
-<script src="/xcharts/js/d3.v2.min.js"></script>
+<script src="/xcharts/js/d3.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="/xcharts/js/xcharts.min.js"></script>
 <script src="/xcharts/js/rainbow.min.js"></script>
@@ -36,7 +36,7 @@
     <h3>a D3-based library for building custom charts and graphs</h3>
   </hgroup>
 
-  <nav data-version="v0.1.3">
+  <nav data-version="v0.2.0">
     <ul>
       <li>
         <a href="/xcharts/">download</a>
@@ -902,6 +902,39 @@
 
         </article>
         
+        <article class="opt" id="opt-sortX">
+          <h1><var class="rainbow"><span class="variable">sortX</span></var></h1>
+          
+<p>Provide a method to custom-sort x-axis data. Must be a valid <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">array comparator</a>, returning <samp>-1</samp>, <samp>0</samp>, or <samp>1</samp>.</p>
+<dl>
+  <dt>Type</dt>
+  <dd><code data-language="javascript">function</code></dd>
+  
+  <dt>Default</dt>
+  <dd><code data-language="javascript">function (a, b) {
+  return (!a.x &amp;&amp; !b.x) ? 0 : (a.x &lt; b.x) ? -1 : 1;
+}</code></dd>
+  
+ 
+ 
+  <dt>Arguments</dt>
+  <dd>
+    <dl>
+    
+    <dt><var>a</var></dt>
+    <dd>datum object</dd>
+    
+    <dt><var>b</var></dt>
+    <dd>datum object</dd>
+    
+    </dl>
+  </dd>
+  
+</dl>
+
+
+        </article>
+        
         <article class="opt" id="opt-unsupported">
           <h1><var class="rainbow"><span class="variable">unsupported</span></var></h1>
           
@@ -1097,7 +1130,7 @@ xChart.setVis('myvis', MyVis);</code></pre>
 
       <pre><code data-language="javascript">var line = xChart.getVis('line');
 var myVis = {
-  enter: function (self, storage, data, className) {
+  enter: function (self, storage, className, data) {
     line.enter.apply(this, arguments);
     // Do your custom actions here
   },
@@ -1187,7 +1220,7 @@ xChart.setVis('myvis', myVis);</code></pre>
         </article>
         
         <article class="opt" id="vis-enter">
-          <h1><code class="rainbow">enter(self, storage, data, className)</code></h1>
+          <h1><code class="rainbow">enter(self, storage, className, data)</code></h1>
 
           <p>As the first draw step, enter is used to create any elements that we need and bind the data information to each element.</p>
 
@@ -1199,11 +1232,11 @@ xChart.setVis('myvis', myVis);</code></pre>
             <dt><var>storage</var></dt>
             <dd>A persistent object specific to this vis type for you to store data for later retrieval.</dd>
             
-            <dt><var>data</var></dt>
-            <dd>The data that should be used for drawing this vis.</dd>
-            
             <dt><var>className</var></dt>
             <dd>A set of CSS classNames, dot-separated, that are recommended to be appended to the main element of this vis.</dd>
+            
+            <dt><var>data</var></dt>
+            <dd>The data that should be used for drawing this vis.</dd>
             
           </dl>
 
@@ -1432,6 +1465,8 @@ xChart.setVis('myvis', myVis);</code></pre>
           <li><a href="#opt-dataFormatX">dataFormatX</a></li>
         
           <li><a href="#opt-dataFormatY">dataFormatY</a></li>
+        
+          <li><a href="#opt-sortX">sortX</a></li>
         
           <li><a href="#opt-unsupported">unsupported</a></li>
         
