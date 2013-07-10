@@ -3,7 +3,6 @@ node_modules/*
 npm-debug.log
 *~
 tmp/*
-build/*
 xcharts-build.tar.gz
 tmp_build/*
 docs/css/*
