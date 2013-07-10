@@ -786,7 +786,7 @@ _.defaults(xChart.prototype, {
           np.y = o.dataFormatY(p.y);
         }
         return np;
-      });//.sort(o.sortX);
+      }).sort(o.sortX);
       return _.extend(_.clone(set), { data: d });
     }
 
